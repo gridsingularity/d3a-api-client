@@ -9,7 +9,7 @@ from d3a_api_client.utils import consumer_websocket_domain_name_from_env, domain
 from d3a_api_client.websocket_device import WebsocketMessageReceiver
 from d3a_api_client.websocket_device import retry_coroutine
 from d3a_api_client.rest_device import RestDeviceClient
-from live_data_subscriber import allowed_devices_name_mapping, refresh_cn_and_device_list
+from live_data_subscriber import mqtt_devices_name_mapping, refresh_cn_and_device_list
 from live_data_subscriber.constants import RELOAD_CN_DEVICE_LIST_TIMEOUT_SECONDS
 
 
@@ -57,7 +57,7 @@ class WSConsumer(RestCommunicationMixin):
         self._create_jwt_refresh_timer(self.domain_name)
         self.last_time_checked, self.device_api_client_mapping = refresh_cn_and_device_list(
             last_time_checked=time() - RELOAD_CN_DEVICE_LIST_TIMEOUT_SECONDS,
-            api_client_dict={k: [] for k, _ in allowed_devices_name_mapping.items()}
+            api_client_dict={k: [] for k, _ in mqtt_devices_name_mapping.items()}
         )
         self.websockets_domain_name = consumer_websocket_domain_name_from_env
         self.start_websocket_connection()

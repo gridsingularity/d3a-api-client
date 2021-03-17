@@ -6,7 +6,7 @@ import paho.mqtt.client as mqtt
 from time import time
 
 from d3a_api_client.rest_device import RestDeviceClient
-from live_data_subscriber import allowed_devices_name_mapping, \
+from live_data_subscriber import mqtt_devices_name_mapping, \
     refresh_cn_and_device_list
 from live_data_subscriber.constants import RELOAD_CN_DEVICE_LIST_TIMEOUT_SECONDS, MQTT_PORT
 
@@ -19,7 +19,7 @@ class MQTTConnection:
     def __init__(self):
         self.last_time_checked, self.topic_api_client_dict = refresh_cn_and_device_list(
             last_time_checked=time() - RELOAD_CN_DEVICE_LIST_TIMEOUT_SECONDS,
-            api_client_dict={v: [] for _, v in allowed_devices_name_mapping.items()},
+            api_client_dict={v: [] for _, v in mqtt_devices_name_mapping.items()},
             is_mqtt=True
         )
         self.client = mqtt.Client()
@@ -30,7 +30,7 @@ class MQTTConnection:
     def on_connect(self, client, userdata, flags, rc):
         logging.info(f"Connected with result code {str(rc)}")
 
-        for topic_name in allowed_devices_name_mapping.values():
+        for topic_name in mqtt_devices_name_mapping.values():
             logging.info(f"Subscribed to topic {topic_name}")
             subscribe_result = client.subscribe(topic_name)
             if subscribe_result[0] != 0:
